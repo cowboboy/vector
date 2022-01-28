@@ -22,9 +22,61 @@ class Vector:
         """
         return len(self.__coords)
 
+    def operation(func):
+        """
+        Decorator for plus and minus. It checks correct of values.
+        """
+        def wrapper(self, other):
+            if not self.__check_value(other):
+                raise ArithmeticError("Operands need to be type of Vector")
+
+            return func(self, other)
+
+
+        return wrapper
+
+    @classmethod
+    def __check_value(cls, value):
+        """
+        Output True if value is cls
+        """
+        return isinstance(value, cls)
+
+    @operation
     def __add__(self, other):
         """
         Output sum of vectors
         """
         return self.__class__(*[sum(c) for c in zip(self.__coords, other.__coords)])
+
+    @operation
+    def __iadd__(self, other):
+        return self + other
+
+    @operation
+    def __sub__(self, other):
+        """
+        Output sub of vectors
+        """
+        return self.__class__(*[c[0] - c[1] for c in zip(self.__coords, other.__coords)])
+
+    @operation
+    def __isub__(self, other):
+        return self - other
+
+    def __mul__(self, other):
+        """
+        If other is Vector output scalar mul of vectors
+        If other is int output mul of vector and const
+        """
+        if isinstance(other, int):
+            return self.__class__(*[other * c for c in self.__coords])
+        return sum([c[0] * c[1] for c in zip(self.__coords, other.__coords)])
+
+    def __rmul__(self, other):
+        return self * other
+
+    def __imul__(self, other):
+        return self * other
+
 
